@@ -1,0 +1,5 @@
+HEY
+hi
+Happy
+Hi all we are learning file handling 
+One more line added 
