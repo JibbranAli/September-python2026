@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Profile Card</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom scrollbars and extra polish */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.4);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(16, 185, 129, 0.7);
+        }
+        .glass-card {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300 flex flex-col items-center justify-center p-4 sm:p-6 md:p-10 font-sans selection:bg-emerald-500 selection:text-white">
+
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-emerald-400/20 dark:bg-emerald-600/15 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-500/20 dark:bg-indigo-600/15 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 1.5s;"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 w-full max-w-4xl bg-white/80 dark:bg-slate-800/80 glass-card rounded-3xl shadow-2xl border border-white/40 dark:border-slate-700/50 overflow-hidden transition-all duration-300">
+        
+        <!-- Header Banner & Theme Toggle -->
+        <div class="relative h-44 sm:h-52 bg-gradient-to-r from-emerald-500 via-teal-600 to-indigo-600 p-6 flex items-start justify-between">
+            <!-- Decorative Banner Pattern -->
+            <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            
+            <!-- Theme Toggle & Action Buttons -->
+            <div class="relative z-10 flex items-center gap-2 ml-auto">
+                <button id="themeToggle" onclick="toggleTheme()" class="p-2.5 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-lg focus:outline-none" aria-label="Toggle Theme">
+                    <i id="themeIcon" class="fas fa-moon text-lg"></i>
+                </button>
+                <button onclick="shareProfile()" class="p-2.5 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-lg focus:outline-none" aria-label="Share Profile">
+                    <i class="fas fa-share-alt text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Profile Header Content (Overlapping Banner) -->
+        <div class="px-6 sm:px-10 pb-6 relative">
+            <div class="flex flex-col sm:flex-row items-center sm:items-end -mt-20 sm:-mt-24 mb-6 gap-6 text-center sm:text-left">
+                <!-- Avatar with Animated Border -->
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-500 group-hover:scale-105"></div>
+                    <img id="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300" alt="Profile Picture" class="relative w-36 h-36 sm:w-40 sm:h-40 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-xl transition-transform duration-300 group-hover:scale-[1.02]">
+                    <span class="absolute bottom-2 right-2 w-5 h-5 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-md" title="Available for work"></span>
+                </div>
+
+                <!-- Basic Info -->
+                <div class="flex-1 space-y-1">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 justify-center sm:justify-start">
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                            Alex Morgan
+                        </h1>
+                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 self-center sm:self-auto">
+                            <i class="fas fa-check-circle text-xs"></i> Verified Pro
+                        </span>
+                    </div>
+                    <p class="text-emerald-600 dark:text-emerald-400 font-medium text-base sm:text-lg">Senior Full-Stack Developer & UI/UX Designer</p>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm flex items-center justify-center sm:justify-start gap-2">
+                        <i class="fas fa-map-marker-alt text-rose-500"></i> San Francisco, CA (Remote Available)
+                    </p>
+                </div>
+
+                <!-- Call to Action Buttons -->
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-center pt-2 sm:pt-0">
+                    <button onclick="copyEmail()" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm shadow-lg shadow-emerald-600/30 hover:shadow-emerald-600/50 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                        <i class="fas fa-paper-plane"></i> Contact Me
+                    </button>
+                    <button onclick="downloadCV()" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white font-medium text-sm transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                        <i class="fas fa-download"></i> Resume
+                    </button>
+                </div>
+            </div>
+
+            <!-- Short Bio Summary -->
+            <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl mb-6">
+                Passionate software engineer with 6+ years of experience crafting high-performance web applications, intuitive design systems, and robust backend APIs. Focused on building scalable, accessible, and delight-inducing digital products.
+            </p>
+
+            <!-- Navigation Tabs -->
+            <div class="border-b border-slate-200 dark:border-slate-700/80 mb-6 overflow-x-auto no-scrollbar">
+                <nav class="flex gap-6 sm:gap-8 min-w-max">
+                    <button onclick="switchTab('qualifications')" id="tab-qualifications" class="tab-btn py-3 border-b-2 font-semibold text-sm transition-all duration-200 text-emerald-600 dark:text-emerald-400 border-emerald-600 dark:border-emerald-400 flex items-center gap-2">
+                        <i class="fas fa-graduation-cap"></i> Qualifications
+                    </button>
+                    <button onclick="switchTab('skills')" id="tab-skills" class="tab-btn py-3 border-b-2 font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-2">
+                        <i class="fas fa-code"></i> Skills & Expertise
+                    </button>
+                    <button onclick="switchTab('experience')" id="tab-experience" class="tab-btn py-3 border-b-2 font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-2">
+                        <i class="fas fa-briefcase"></i> Experience
+                    </button>
+                    <button onclick="switchTab('projects')" id="tab-projects" class="tab-btn py-3 border-b-2 font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-2">
+                        <i class="fas fa-folder-open"></i> Featured Projects
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content Sections -->
+            <div id="content-qualifications" class="tab-content block space-y-6 animate-fadeIn">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-award text-emerald-500"></i> Academic & Professional Education
+                </h2>
+                
+                <div class="space-y-4 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-700">
+                    <!-- Qualification Item 1 -->
+                    <div class="relative pl-9 group">
+                        <span class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-emerald-100 dark:bg-emerald-950 border-2 border-emerald-500 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-xs transition-transform group-hover:scale-110">
+                            <i class="fas fa-university"></i>
+                        </span>
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200/60 dark:border-slate-700/60 hover:shadow-md transition-all duration-300">
+                            <div class="flex flex-wrap items-center justify-between gap-1 mb-1">
+                                <h3 class="font-semibold text-slate-900 dark:text-white">Master of Science in Computer Science</h3>
+                                <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-medium">2018 - 2020</span>
+                            </div>
+                            <p class="text-sm font-medium text-emerald-600 dark:text-emerald-400 mb-2">Stanford University</p>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                                Specialization in Software Architecture & Distributed Systems. Graduated with First Class Honors (GPA 3.9/4.0). Thesis on resilient real-time WebSockets streaming.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Qualification Item 2 -->
+                    <div class="relative pl-9 group">
+                        <span class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-950 border-2 border-indigo-500 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-xs transition-transform group-hover:scale-110">
+                            <i class="fas fa-user-graduate"></i>
+                        </span>
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200/60 dark:border-slate-700/60 hover:shadow-md transition-all duration-300">
+                            <div class="flex flex-wrap items-center justify-between gap-1 mb-1">
+                                <h3 class="font-semibold text-slate-900 dark:text-white">Bachelor of Science in Information Technology</h3>
+                                <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-medium">2014 - 2018</span>
+                            </div>
+                            <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400 mb-2">University of California, Berkeley</p>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                                Core coursework in Data Structures, Algorithms, Web Development, Database Management Systems, and Cloud Computing. Head of the Developer Student Club.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Certification Badge List -->
+                    <div class="relative pl-9 group">
+                        <span class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950 border-2 border-amber-500 flex items-center justify-center text-amber-600 dark:text-amber-400 text-xs transition-transform group-hover:scale-110">
+                            <i class="fas fa-certificate"></i>
+                        </span>
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200/60 dark:border-slate-700/60 hover:shadow-md transition-all duration-300">
+                            <h3 class="font-semibold text-slate-900 dark:text-white mb-3">Industry Certifications</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5">
+                                    <i class="fab fa-aws text-amber-500"></i> AWS Certified Solutions Architect
+                                </span>
+                                <span class="px-3 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5">
+                                    <i class="fab fa-react text-cyan-500"></i> Meta Certified Senior Frontend Developer
+                                </span>
+                                <span class="px-3 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5">
+                                    <i class="fas fa-shield-alt text-emerald-500"></i> Certified Information Systems Security Professional
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Skills -->
+            <div id="content-skills" class="tab-content hidden space-y-6">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-laptop-code text-emerald-500"></i> Technical Proficiency
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Skill Bar 1 -->
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200/60 dark:border-slate-700/60">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                                <i class="fab fa-js text-yellow-500"></i> JavaScript / TypeScript
+                            </span>
+                            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">95%</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-1000" style="width: 95%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skill Bar 2 -->
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200/60 dark:border-slate-700/60">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                                <i class="fab fa-react text-cyan-400"></i> React / Next.js
+                            </span>
+                            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">90%</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-1000" style="width: 90%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skill Bar 3 -->
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200/60 dark:border-slate-700/60">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                                <i class="fab fa-node-js text-green-500"></i> Node.js / Express
+                            </span>
+                            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">85%</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-1000" style="width: 85%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skill Bar 4 -->
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200/60 dark:border-slate-700/60">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                                <i class="fas fa-database text-indigo-500"></i> PostgreSQL / MongoDB
+                            </span>
+                            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">80%</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-1000" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soft Skills & Tools Badges -->
+                <div class="pt-2">
+                    <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Tools & Frameworks</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-600 transition-colors cursor-default">Tailwind CSS</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-600 transition-colors cursor-default">GraphQL</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-600 transition-colors cursor-default">Docker & Kubernetes</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-600 transition-colors cursor-default">Git & CI/CD</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-600 transition-colors cursor-default">Figma</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-600 transition-colors cursor-default">Jest & Cypress</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Experience -->
+            <div id="content-experience" class="tab-content hidden space-y-4">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-briefcase text-emerald-500"></i> Work History
+                </h2>
+
+                <div class="space-y-4">
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200/60 dark:border-slate-700/60 hover:border-emerald-500/50 transition-all duration-300">
+                        <div class="flex flex-wrap justify-between items-start gap-2 mb-1">
+                            <div>
+                                <h3 class="font-bold text-slate-900 dark:text-white">Lead Frontend Engineer</h3>
+                                <p class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">TechCorp Solutions Inc.</p>
+                            </div>
+                            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium">2021 - Present</span>
+                        </div>
+                        <ul class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-1 list-disc list-inside mt-2">
+                            <li>Spearheaded redesign of flag web product, boosting user retention by 28%.</li>
+                            <li>Mentored a team of 8 frontend engineers and established modern code review practices.</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200/60 dark:border-slate-700/60 hover:border-emerald-500/50 transition-all duration-300">
+                        <div class="flex flex-wrap justify-between items-start gap-2 mb-1">
+                            <div>
+                                <h3 class="font-bold text-slate-900 dark:text-white">Full Stack Web Developer</h3>
+                                <p class="text-xs text-indigo-600 dark:text-indigo-400 font-medium">Apex Digital Studio</p>
+                            </div>
+                            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium">2019 - 2021</span>
+                        </div>
+                        <ul class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-1 list-disc list-inside mt-2">
+                            <li>Built high-concurrency microservices using Node.js and Redis.</li>
+                            <li>Developed over 15 dynamic web applications for global enterprise clients.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Projects -->
+            <div id="content-projects" class="tab-content hidden space-y-4">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-folder-open text-emerald-500"></i> Featured Works
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Project Card 1 -->
+                    <div class="group rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200/60 dark:border-slate-700/60 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400">
+                                    <i class="fas fa-chart-line text-lg"></i>
+                                </span>
+                                <a href="#" onclick="alert('Navigating to Live Demo!'); return false;" class="text-slate-400 hover:text-emerald-500 text-sm transition-colors">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <h3 class="font-bold text-slate-900 dark:text-white group-hover:text-emerald-500 transition-colors">Analytics Dashboard Pro</h3>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Real-time data visualization platform with responsive charts, custom widgets, and dark mode.</p>
+                        </div>
+                        <div class="px-5 pb-4 flex flex-wrap gap-1.5">
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300">React</span>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300">Tailwind</span>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300">ChartJS</span>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 2 -->
+                    <div class="group rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200/60 dark:border-slate-700/60 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
+                                    <i class="fas fa-shopping-bag text-lg"></i>
+                                </span>
+                                <a href="#" onclick="alert('Navigating to Live Demo!'); return false;" class="text-slate-400 hover:text-indigo-500 text-sm transition-colors">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <h3 class="font-bold text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">AI E-Commerce Suite</h3>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Next-gen shopping platform featuring AI recommendation engine and instant checkout flow.</p>
+                        </div>
+                        <div class="px-5 pb-4 flex flex-wrap gap-1.5">
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Next.js</span>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300">Stripe</span>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300">Node.js</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Links Footer -->
+            <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Connect with me across the web:</span>
+                <div class="flex items-center gap-3">
+                    <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-all duration-300 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 hover:scale-110 shadow-sm">
+                        <i class="fab fa-github text-lg"></i>
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-all duration-300 hover:bg-blue-600 hover:text-white hover:scale-110 shadow-sm">
+                        <i class="fab fa-linkedin-in text-lg"></i>
+                    </a>
+                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-all duration-300 hover:bg-sky-500 hover:text-white hover:scale-110 shadow-sm">
+                        <i class="fab fa-twitter text-lg"></i>
+                    </a>
+                    <a href="https://dribbble.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-all duration-300 hover:bg-pink-500 hover:text-white hover:scale-110 shadow-sm">
+                        <i class="fab fa-dribbble text-lg"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification Banner -->
+    <div id="toast" class="fixed bottom-6 right-6 translate-y-20 opacity-0 bg-slate-900 dark:bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 z-50 pointer-events-none">
+        <i id="toastIcon" class="fas fa-check-circle text-emerald-400 dark:text-white"></i>
+        <span id="toastMsg" class="text-sm font-medium">Notification Message</span>
+    </div>
+
+    <script>
+        // Tab Switch Logic
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('block');
+            });
+
+            // Deactivate all tab buttons styling
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('text-emerald-600', 'dark:text-emerald-400', 'border-emerald-600', 'dark:border-emerald-400');
+                btn.classList.add('text-slate-500', 'dark:text-slate-400', 'border-transparent');
+            });
+
+            // Show current active content
+            const activeContent = document.getElementById(`content-${tabName}`);
+            if (activeContent) {
+                activeContent.classList.remove('hidden');
+                activeContent.classList.add('block');
+            }
+
+            // Activate current active button styling
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            if (activeBtn) {
+                activeBtn.classList.add('text-emerald-600', 'dark:text-emerald-400', 'border-emerald-600', 'dark:border-emerald-400');
+                activeBtn.classList.remove('text-slate-500', 'dark:text-slate-400', 'border-transparent');
+            }
+        }
+
+        // Theme Toggle Logic
+        function toggleTheme() {
+            const htmlEl = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (htmlEl.classList.contains('dark')) {
+                htmlEl.classList.remove('dark');
+                themeIcon.className = 'fas fa-moon text-lg';
+                showToast('Light theme enabled');
+            } else {
+                htmlEl.classList.add('dark');
+                themeIcon.className = 'fas fa-sun text-lg text-amber-300';
+                showToast('Dark theme enabled');
+            }
+        }
+
+        // Toast Notification System
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            
+            toastMsg.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+
+        // Helper function for Clipboard Operations
+        function copyEmail() {
+            const email = "alex.morgan@example.com";
+            const textarea = document.createElement("textarea");
+            textarea.value = email;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Email address copied to clipboard!");
+            } catch (err) {
+                showToast("Contact: " + email);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function downloadCV() {
+            showToast("Resume download initiated!");
+        }
+
+        function shareProfile() {
+            copyEmail();
+        }
+    </script>
+</body>
+</html>
